@@ -19,8 +19,8 @@ export function MainNav({
         },
         {
             href: `/${params.storeId}/billboards`,
-            label: 'Cartelera',
-            active: pathname === `/${params.storeId}/billboard`,
+            label: 'Carteleras',
+            active: pathname === `/${params.storeId}/billboards`,
         },
         {
             href: `/${params.storeId}/settings`,
