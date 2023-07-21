@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { Category, Color, Image, Product, Size } from "@prisma/client";
-import { Trash } from "lucide-react";
+import { FileDiff, Trash } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-hot-toast";
 import axios from "axios";
@@ -17,6 +17,7 @@ import { useParams, useRouter } from "next/navigation";
 import { AlertModal } from "@/components/modals/alert-modal";
 import ImageUpload from "@/components/ui/image-upload";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface ProductFormProps {
     initialData: Product & {
@@ -80,13 +81,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         try{
             setLoading(true);
             if(initialData){
-            await axios.patch(`/api/${params.storeId}/billboards/${params.billboardId}`, data);
+            await axios.patch(`/api/${params.storeId}/products/${params.productId}`, data);
             }
             else{
-            await axios.post(`/api/${params.storeId}/billboards`, data);    
+            await axios.post(`/api/${params.storeId}/products`, data);    
             }
             router.refresh();
-            router.push(`/${params.storeId}/billboards`)
+            router.push(`/${params.storeId}/products`)
             toast.success(toastMessage)
         } catch(error){
             toast.error("Algo salio mal...")
@@ -99,12 +100,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     const onDelete = async () => {
         try {
         setLoading(true);
-        await axios.delete(`/api/${params.storeId}/billboards/${params.billboardId}`)
+        await axios.delete(`/api/${params.storeId}/products/${params.productId}`)
         router.refresh();
         router.push("/");
-        toast.success("Cartelera eliminada.")
+        toast.success("Producto eliminado.")
         } catch (error){
-            toast.error('Asegúrese de eliminar todas las categorías usando esta cartelera primero');
+            toast.error('Algo salio mal...');
         } finally {
             setLoading(false);
             setOpen(false);
@@ -255,6 +256,85 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                             <FormMessage />
                         </FormItem>
                     )}/>
+
+                    <FormField 
+                    control={form.control}
+                    name="colorId"
+                    render={({field}) => (
+                        <FormItem>
+                            <FormLabel>
+                                Color
+                            </FormLabel>
+                             <Select 
+                             disabled={loading} 
+                             onValueChange={field.onChange} 
+                             value={field.value} 
+                             defaultValue={field.value}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue
+                                        defaultValue={field.value}
+                                        placeholder="Seleccionar un color" 
+                                        />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {colors.map((color) => (
+                                        <SelectItem
+                                        key={color.id}
+                                        value={color.id}>
+                                            {color.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                             </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )}/>
+
+                    <FormField 
+                    control={form.control}
+                    name="isFeatured"
+                    render={({field}) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                            <FormControl>
+                                <Checkbox 
+                                checked={field.value}
+                                //@ts-ignore
+                                onCheckedChange={field.onChange}/>
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                                <FormLabel>
+                                    Recomendados
+                                </FormLabel>
+                                <FormDescription>
+                                    Este producto aparecera en la pagina principal
+                                </FormDescription>
+                            </div>
+                        </FormItem>
+                    )}/>             
+
+                    <FormField 
+                    control={form.control}
+                    name="isArchived"
+                    render={({field}) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                            <FormControl>
+                                <Checkbox 
+                                checked={field.value}
+                                //@ts-ignore
+                                onCheckedChange={field.onChange}/>
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                                <FormLabel>
+                                Archivados
+                                </FormLabel>
+                                <FormDescription>
+                                    Este producto no aparecera en la pagina principal
+                                </FormDescription>
+                            </div>
+                        </FormItem>
+                    )}/>                   
                 </div>
                 <Button disabled={loading} className="ml-auto" type="submit">
                     {action}
