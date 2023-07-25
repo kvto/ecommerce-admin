@@ -30,7 +30,7 @@ interface ProductFormProps {
 
 const formSchema = z.object({
     name: z.string().min(1),
-    images: z.object({ url: z.string()}).array(),
+    image: z.object({ url: z.string()}).array(),
     price: z.coerce.number().min(1),
     categoryId: z.string().min(1),
     colorId: z.string().min(1),
@@ -67,7 +67,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             price: parseFloat(String(initialData?.price))
         } : {
             name: '',
-            images: [],
+            image: [],
             price: 0,
             categoryId: '',
             colorId: '',
@@ -139,7 +139,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
             <FormField 
                     control={form.control}
-                    name="images"
+                    name="image"
                     render={({field}) => (
                         <FormItem>
                             <FormLabel>

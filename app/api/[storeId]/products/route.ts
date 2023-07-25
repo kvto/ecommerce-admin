@@ -17,7 +17,7 @@ export async function POST(
             categoryId,
             colorId,
             sizeId,
-            images,
+            image,
             isFeatured,
             isArchived
          } = body;
@@ -30,7 +30,7 @@ export async function POST(
             return new NextResponse("Nombre requerido", { status: 400 });
         }
 
-        if(!images || !images.length){
+        if(!image || !image.length){
             return new NextResponse("Imagenes requerida", { status: 400 });
         }
 
@@ -79,7 +79,7 @@ export async function POST(
                 image: {
                     createMany: {
                         data: [
-                            ...images.map((image: { url: string}) => image)
+                            ...image.map((image: { url: string}) => image)
                         ]
                     }
                 }
